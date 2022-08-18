@@ -108,7 +108,8 @@ SELECT
     mean_height,
     mean_slope,
     multipolygon
-FROM layers.fire;
+FROM layers.fire
+WHERE multipolygon IS NOT NULL;
 
 
 CREATE VIEW layers.lau1 AS

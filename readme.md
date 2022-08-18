@@ -21,7 +21,7 @@ password = PASSWORD
 ```
 
 ## Build
-This is the way to build e what this project needs to run on your machine:<br/>
+This is the way to build what this project needs to run on your machine:<br/>
 `./build.sh`<br/>
 
 ## Retrieve data
@@ -68,3 +68,28 @@ There are utilities to update data regularly, in order to get new data and also 
 
 ### crontab for monthly updates day 1 at 1 am
 `0 1 1 * * /path/to/project/update_monthly.sh`
+
+
+
+## Docker
+If you do not have an accessible PostgreSQL server and do not wish to install it in your machine, you can
+use a docker container to run it.
+```
+cd docker
+./build.sh  #might need to use sudo
+```
+or
+```
+cd docker
+./build.sh --with-polygons #might need to use sudo
+```
+This will start a container on your machine with a PostgreSQL db containing the ICNF fire data.<br/>
+You can check db connection params in `docker/db.ini`
+`./build.sh --with-polygons` will take a lot of time to run!
+After build, you can start and stop your container with:<br/>
+`docker container start icnf_fire_data_container` <br/>
+`docker container stop icnf_fire_data_container`
+
+You can also ssh to the running container with the following:<br/>
+`ssh-keygen -f ~/.ssh/known_hosts -R "[localhost]:8022" ; ssh fire@localhost -p8022` <br/>
+password: `fire_pw`
