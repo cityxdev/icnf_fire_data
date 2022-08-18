@@ -1,7 +1,8 @@
 # ICNF Fire Data Retriever
 
 This project aims to provide a way of downloading and structuring data about wildfires in Portugal, in a manner that is easy to use.
-It downloads data from ICNF webservice at https://fogos.icnf.pt/localizador/webserviceocorrencias.asp and inserts in a PostgreSQL/PostGIS db.
+It downloads data from ICNF webservice at https://fogos.icnf.pt/localizador/webserviceocorrencias.asp and inserts in a PostgreSQL/PostGIS db.<br/>
+Main inspiration: [VOSTPT](https://github.com/vostpt/ICNF_DATA)
 
 ## Pre-requisites
 * This was created to work on Linux (some adjustments must be done of other OS)
