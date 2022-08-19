@@ -26,14 +26,14 @@ This is the way to build what this project needs to run on your machine:<br/>
 `./build.sh`<br/>
 
 ## Retrieve data
-`retriever.py` will download data from the webservice and transform it into CSV files (separator is |), one per year.
-There is data from 2001.
+`retriever.py` will download data from the webservice and transform it into CSV files (separator is |), one per year.<br/>
+There is data from 2001.<br/>
 If you just need old data in CSV, you do not need to run anything, just use the files under /data (the one for the current year is not updated)
 * Retrieve since 2001: `python3 retriever.py all`
 * Retrieve a certain year (e.g. 2017): `python3 retriever.py 2017`
 * Retrieve last x days (e.g. 10): `python3 retriever.py ndays 10`
 
-## From CSV to 
+## From CSV to PostgreSQL
 `filler.py` reads the files under `data/` and writes the data to the database.
 * Write everything in `data/` to the db: `python3 filler.py`
 * Write the last x days in `data/` to the db (e.g. 10 days): `python3 filler.py ndays 10`
@@ -86,7 +86,7 @@ cd docker
 ```
 This will start a container on your machine with a PostgreSQL db containing the ICNF fire data.<br/>
 You can check db connection params in `docker/db.ini`<br/>
-`./build.sh --with-polygons` will take a lot of time to run!
+`./build.sh --with-polygons` will take a lot of time to run!<br/>
 After build, you can start and stop your container with:<br/>
 `docker container start icnf_fire_data_container` <br/>
 `docker container stop icnf_fire_data_container`
