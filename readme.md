@@ -85,7 +85,7 @@ cd docker
 ./build.sh --with-polygons #might need to use sudo
 ```
 This will start a container on your machine with a PostgreSQL db containing the ICNF fire data.<br/>
-You can check db connection params in `docker/db.ini`
+You can check db connection params in `docker/db.ini`<br/>
 `./build.sh --with-polygons` will take a lot of time to run!
 After build, you can start and stop your container with:<br/>
 `docker container start icnf_fire_data_container` <br/>
