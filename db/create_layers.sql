@@ -1,5 +1,7 @@
-CREATE SCHEMA layers;
+CREATE SCHEMA IF NOT EXISTS layers;
 
+GRANT USAGE ON SCHEMA layers TO fire_read;
+GRANT SELECT ON ALL TABLES IN SCHEMA layers TO fire_read;
 
 CREATE VIEW layers.fire AS
     SELECT
