@@ -1,12 +1,12 @@
 CREATE SCHEMA IF NOT EXISTS layers;
 
 GRANT USAGE ON SCHEMA layers TO fire_read;
-GRANT SELECT ON ALL TABLES IN SCHEMA layers TO fire_read;
 
 CREATE VIEW layers.fire AS
     SELECT
         f.id,
         f.year,
+        f.ts,
         l3.name AS lau3,
         l2.name AS lau2,
         l1.name AS lau1,
@@ -49,6 +49,7 @@ CREATE VIEW layers.fire_points AS
 SELECT
     id,
     year,
+    ts,
     lau3,
     lau2,
     lau1,
@@ -83,6 +84,7 @@ CREATE VIEW layers.fire_multipolygons AS
 SELECT
     id,
     year,
+    ts,
     lau3,
     lau2,
     lau1,
@@ -144,3 +146,5 @@ CREATE VIEW layers.lau3 AS
         JOIN lau.lau l2 ON l3.code_parent=l2.code
         JOIN lau.lau l1 ON l2.code_parent=l1.code
     WHERE l3.level = 3;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA layers TO fire_read;

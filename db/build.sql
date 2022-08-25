@@ -107,25 +107,25 @@ CREATE INDEX idx_geom_lau ON lau.lau USING gist (geom);
 CREATE SCHEMA ref;
 CREATE TABLE ref.fire_type(
     id serial PRIMARY KEY ,
-    code varchar(6),
+    code varchar(60),
     raw_name varchar
 );
 CREATE UNIQUE INDEX idx_un_raw_name_fire_type ON ref.fire_type(raw_name);
 CREATE TABLE ref.alarm_source(
     id serial PRIMARY KEY ,
-    code varchar(6),
+    code varchar(60),
     raw_name varchar
 );
 CREATE UNIQUE INDEX idx_un_raw_name_alarm_source ON ref.alarm_source(raw_name);
 CREATE TABLE ref.cause(
     id serial PRIMARY KEY ,
-    code varchar(6),
+    code varchar(60),
     raw_name varchar
 );
 CREATE UNIQUE INDEX idx_un_raw_name_cause ON ref.cause(raw_name);
 CREATE TABLE ref.cause_type(
     id serial PRIMARY KEY ,
-    code varchar(6),
+    code varchar(60),
     raw_name varchar
 );
 CREATE UNIQUE INDEX idx_un_raw_name_cause_type ON ref.cause_type(raw_name);
@@ -291,6 +291,68 @@ BEGIN
             (year_from IS NULL OR rd.ano::integer>=year_from) AND
             (month_from IS NULL OR rd.mes::integer>=month_from) AND
             (day_from IS NULL OR rd.dia::integer>=day_from);
+            
+    UPDATE ref.cause SET code = 'UNDETERMINED' WHERE raw_name = 'indeterminadas';
+    UPDATE ref.cause SET code = 'ACCIDENTAL_OTHERS' WHERE raw_name = 'acidentais - outros';
+    UPDATE ref.cause SET code = 'ACCIDENTAL_MACHINERY' WHERE raw_name = 'acidentais - maquinaria';
+    UPDATE ref.cause SET code = 'ACCIDENTAL_TRANSPORT_COMMUNICATION' WHERE raw_name = 'acidentais - transportes e comunicações';
+    UPDATE ref.cause SET code = 'ARSON_IMPUTABLE' WHERE raw_name = 'incendiarismo - imputáveis';
+    UPDATE ref.cause SET code = 'ARSON_UNKNOWN_MOTIVATION' WHERE raw_name = 'incendiarismo - sem motivação conhecida';
+    UPDATE ref.cause SET code = 'ARSON_UNIMPUTABLE' WHERE raw_name = 'incendiarismo - inimputáveis';
+    UPDATE ref.cause SET code = 'FIRE_USE_EXTENSIVE_BURN_FOREST_AND_AGRICULTURAL' WHERE raw_name = 'queimadas de sobrantes florestais ou agrícolas';
+    UPDATE ref.cause SET code = 'FIRE_USE_EXTENSIVE_BURN_PASTURE_MANAGEMENT' WHERE raw_name = 'queimadas para gestão de pasto para gado';
+    UPDATE ref.cause SET code = 'FIRE_USE_BONFIRE' WHERE raw_name = 'uso do fogo - fogueiras';
+    UPDATE ref.cause SET code = 'FIRE_USE_FIREWORK' WHERE raw_name = 'uso do fogo - lançamento foguetes';
+    UPDATE ref.cause SET code = 'FIRE_USE_SMOKING' WHERE raw_name = 'uso do fogo - fumar';
+    UPDATE ref.cause SET code = 'FIRE_USE_WASTE_BURNING_GARBAGE' WHERE raw_name = 'uso do fogo - queima de lixo';
+    UPDATE ref.cause SET code = 'FIRE_USE_WASTE_BURNING_FOREST_AND_AGRICULTURAL' WHERE raw_name = 'queimas amontoados de sobrantes florestais ou agrícolas';
+    UPDATE ref.cause SET code = 'FIRE_USE_OTHERS' WHERE raw_name = 'uso do fogo - outros';
+    UPDATE ref.cause SET code = 'REKINDLE' WHERE raw_name = 'reacendimentos';
+    UPDATE ref.cause SET code = 'STRUCTURAL_LAND_USE' WHERE raw_name = 'estruturais - uso do solo';
+    UPDATE ref.cause SET code = 'STRUCTURAL_OTHERS' WHERE raw_name = 'estruturais - outras';
+    UPDATE ref.cause SET code = 'STRUCTURAL_HUNTING_AND_WILDLIFE' WHERE raw_name = 'estruturais - caça e vida selvagem';
+    UPDATE ref.cause SET code = 'NATURAL' WHERE raw_name = 'naturais';
+
+    UPDATE ref.fire_type SET code = 'WASTE_BURNING' WHERE raw_name = 'queima';
+    UPDATE ref.fire_type SET code = 'AGRICULTURAL' WHERE raw_name = 'agrícola';
+    UPDATE ref.fire_type SET code = 'FOREST' WHERE raw_name = 'florestal';
+
+    UPDATE ref.cause_type SET code = 'NATURAL' WHERE raw_name = 'natural';
+    UPDATE ref.cause_type SET code = 'UNKNOWN' WHERE raw_name = 'desconhecida';
+    UPDATE ref.cause_type SET code = 'DELIBERATE' WHERE raw_name = 'intencional';
+    UPDATE ref.cause_type SET code = 'REKINDLE' WHERE raw_name = 'reacendimento';
+    UPDATE ref.cause_type SET code = 'NEGLIGENT' WHERE raw_name = 'negligente';
+
+    UPDATE ref.alarm_source SET code = 'AIR_SURVEILLANCE' WHERE raw_name = 'vig. aérea';
+    UPDATE ref.alarm_source SET code = 'OTHERS' WHERE raw_name = 'outros';
+    UPDATE ref.alarm_source SET code = 'GNR' WHERE raw_name = 'gnr';
+    UPDATE ref.alarm_source SET code = 'PSP' WHERE raw_name = 'psp';
+    UPDATE ref.alarm_source SET code = 'CDOS' WHERE raw_name = 'cdos';
+    UPDATE ref.alarm_source SET code = 'CM' WHERE raw_name = 'cm';
+    UPDATE ref.alarm_source SET code = 'PJ' WHERE raw_name = 'pj';
+    UPDATE ref.alarm_source SET code = 'CODU' WHERE raw_name = 'codu';
+    UPDATE ref.alarm_source SET code = 'POPULATION' WHERE raw_name = 'populares';
+    UPDATE ref.alarm_source SET code = 'VT' WHERE raw_name = 'vt';
+    UPDATE ref.alarm_source SET code = 'VMT_AGRIS' WHERE raw_name = 'vmt/agris';
+    UPDATE ref.alarm_source SET code = 'PNPG' WHERE raw_name = 'pnpg';
+    UPDATE ref.alarm_source SET code = 'CNGF' WHERE raw_name = 'cngf';
+    UPDATE ref.alarm_source SET code = 'PRIVATE' WHERE raw_name = 'particular';
+    UPDATE ref.alarm_source SET code = 'DRA' WHERE raw_name = 'dra';
+    UPDATE ref.alarm_source SET code = 'PART' WHERE raw_name = 'part';
+    UPDATE ref.alarm_source SET code = 'CIVIL_PROTECTION' WHERE raw_name = 's.m.prot. civil';
+    UPDATE ref.alarm_source SET code = 'PROFESSIONAL_FIREFIGHTERS' WHERE raw_name = 'sapadores';
+    UPDATE ref.alarm_source SET code = 'PROFESSIONAL_FOREST_FIREFIGHTERS' WHERE raw_name = 'sapadores flo';
+    UPDATE ref.alarm_source SET code = 'BAV' WHERE raw_name = 'bav';
+    UPDATE ref.alarm_source SET code = 'CCO' WHERE raw_name = 'cco';
+    UPDATE ref.alarm_source SET code = 'BT' WHERE raw_name = 'bt';
+    UPDATE ref.alarm_source SET code = 'P_MUN' WHERE raw_name = 'p.mun.';
+    UPDATE ref.alarm_source SET code = 'CB' WHERE raw_name = 'cb';
+    UPDATE ref.alarm_source SET code = 'GROUND_MOBILE_SURVEILLANCE' WHERE raw_name = 'vig. movel terr';
+    UPDATE ref.alarm_source SET code = 'EMERGENCY_TELEPHONE_NR' WHERE raw_name = '112';
+    UPDATE ref.alarm_source SET code = 'FIRE_EMERGENCY_TELEPHONE_NR' WHERE raw_name = '117';
+    UPDATE ref.alarm_source SET code = 'PV' WHERE raw_name = 'pv';
+    UPDATE ref.alarm_source SET code = 'BRISA' WHERE raw_name = 'brisa';
+    UPDATE ref.alarm_source SET code = 'PNM' WHERE raw_name = 'pnm';
 END;
 $$ LANGUAGE PLPGSQL;
 
