@@ -66,7 +66,7 @@ def fetch_polygons_for_file_list(id, file_list):
         if has_data:
             update_command = "UPDATE fire" \
                              " SET multipolygon = (SELECT ST_Transform(ST_MakeValid(ST_Multi(ST_CollectionExtract(ST_Union(ST_MakeValid(geom)),3))),4326)::geography FROM "+tablename+") WHERE id=%s;"
-            update_command = update_command + "UPDATE fire SET multipolygon = NULL WHERE id=%s AND (not(ST_IsValid(multipolygon::geometry)) OR ST_Area(multipolygon)>50000000);"
+            update_command = update_command + "UPDATE fire SET multipolygon = NULL WHERE id=%s AND (ST_IsEmpty(multipolygon::geometry) OR not(ST_IsValid(multipolygon::geometry)) OR ST_Area(multipolygon)>50000000);"
             try:
                 cursor.execute(update_command, [id, id])
                 conn.commit()
