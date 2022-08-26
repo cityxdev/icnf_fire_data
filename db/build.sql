@@ -287,10 +287,9 @@ BEGIN
         ST_SetSRID(ST_Point(rd.lon, rd.lat), 4326)::geography AS point
     FROM raw.data rd
         JOIN lau.lau l ON l.level=3 AND ST_Intersects(ST_SetSRID(ST_Point(rd.lon, rd.lat), 4326),l.geom)
-    WHERE
-            (year_from IS NULL OR rd.ano::integer>=year_from) AND
-            (month_from IS NULL OR rd.mes::integer>=month_from) AND
-            (day_from IS NULL OR rd.dia::integer>=day_from);
+    WHERE year_from IS NULL
+            OR ((rd.ano::integer>=year_from)
+                AND (rd.ano||'-'||rd.mes||'-'||rd.dia)::timestamp without time zone >= ts_from);
             
     UPDATE ref.cause SET code = 'UNDETERMINED' WHERE raw_name = 'indeterminadas';
     UPDATE ref.cause SET code = 'ACCIDENTAL_OTHERS' WHERE raw_name = 'acidentais - outros';
