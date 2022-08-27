@@ -36,11 +36,21 @@ def fill(year, month, day):
                         params = [None if x == '' else x for x in row]
                         cursor.execute(command, params)
                 conn.commit()
+                print("Delete duplicates from " + str(year))
+                delete_command = "DELETE FROM raw.data\
+                                    WHERE ano = %s AND ctid NOT IN (\
+                                        SELECT min(ctid)\
+                                        FROM raw.data\
+                                        WHERE ano = %s\
+                                        GROUP BY distrito, tipo, ano, areapov, areamato, areaagric, areatotal, reacendimentos, queimada, falsoalarme, fogacho, incendio, agricola, ncco, nomecco, dataalerta, horaalerta, local, concelho, freguesia, fontealerta, ine, x, y, dia, mes, hora, operador, perimetro, aps, causa, tipocausa, dhinicio, dhfim, duracao, hahora, dataextincao, horaextincao, data1intervencao, hora1intervencao, queima, lat, lon, causafamilia, temperatura, humidaderelativa, ventointensidade, ventointensidade_vetor, ventodirecao_vetor, precepitacao, ffmc, dmc, dc, isi, bui, fwi, dsr, thc, modfarsite, altitudemedia, declivemedio, horasexposicaomedia, dendidaderv, cosn5variedade, areamanchamodfarsite, areasficheiros_gnr, areasficheiros_gtf, ficheiroimagem_gnr, areasficheiroshp_gtf, areasficheiroshpxml_gtf, areasficheirodbf_gtf, areasficheiroprj_gtf, areasficheirosbn_gtf, areasficheirosbx_gtf, areasficheiroshx_gtf, areasficheirozip_saa)"
+                cursor.execute(delete_command, [year, year])
+                conn.commit()
                 conn.close()
             except Exception as e:
                 print("Error on " + str(year)+"-"+str(month)+"-"+str(day) + " (" + connect_str + ")")
                 print(e)
     print('End fill ' + str(year)+"-"+str(month)+"-"+str(day))
+
 
 
 def fill_from(fromyear, frommonth, fromday):

@@ -284,7 +284,7 @@ BEGIN
             areasficheiroshx_gtf,
             areasficheirozip_saa
         )), '') AS file_urls,
-        ST_SetSRID(ST_Point(rd.lon, rd.lat), 4326)::geography AS point
+        ST_SetSRID(ST_MakeValid(ST_SnapToGrid(ST_Point(rd.lon, rd.lat),0.00001)), 4326)::geography AS point
     FROM raw.data rd
         JOIN lau.lau l ON l.level=3 AND ST_Intersects(ST_SetSRID(ST_Point(rd.lon, rd.lat), 4326),l.geom)
     WHERE year_from IS NULL
