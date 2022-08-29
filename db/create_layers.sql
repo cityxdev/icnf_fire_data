@@ -165,6 +165,16 @@ CREATE VIEW layers.lau2_summary AS
             GROUP BY f.year, EXTRACT(MONTH FROM f.ts),l2.code,l2.name
         ) s ON l.code=s.code;
 
+--Example of selecting the lau1_summary view to get a count per lau1 for year 2022
+--SELECT
+--    year,
+--    lau1,
+--    sum(count) AS count,
+--    first(geom) AS geom
+--FROM layers.lau1_summary
+--WHERE year=2022
+--GROUP BY year,lau1
+
 
 CREATE VIEW layers.lau1_summary AS
     SELECT
@@ -184,5 +194,21 @@ CREATE VIEW layers.lau1_summary AS
             GROUP BY f.year, EXTRACT(MONTH FROM f.ts),l1.code,l1.name
          ) s ON l.code=s.code;
 
+
+CREATE OR REPLACE function first_agg(anyelement, anyelement)
+    returns anyelement language sql immutable strict
+as $$ select $1; $$;
+CREATE OR REPLACE function last_agg(anyelement, anyelement)
+    returns anyelement language sql immutable strict
+as $$ select $2; $$;
+
+CREATE AGGREGATE first(anyelement) (
+    sfunc = first_agg,
+    stype = anyelement
+);
+CREATE AGGREGATE last(anyelement) (
+    sfunc = last_agg,
+    stype = anyelement
+);
 
 GRANT SELECT ON ALL TABLES IN SCHEMA layers TO fire_read;
