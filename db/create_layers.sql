@@ -147,4 +147,42 @@ CREATE VIEW layers.lau3 AS
         JOIN lau.lau l1 ON l2.code_parent=l1.code
     WHERE l3.level = 3;
 
+
+CREATE VIEW layers.lau2_summary AS
+    SELECT
+        s.count, s.year, s.month, s.lau2, l.geom
+    FROM lau.lau l
+        JOIN (
+            SELECT
+                count(*) AS count,
+                f.year,
+                EXTRACT(MONTH FROM f.ts) AS month,
+                l2.name AS lau2,
+                l2.code
+            FROM fire f
+                     LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
+                     LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
+            GROUP BY f.year, EXTRACT(MONTH FROM f.ts),l2.code,l2.name
+        ) s ON l.code=s.code;
+
+
+CREATE VIEW layers.lau1_summary AS
+    SELECT
+        s.count, s.year, s.month, s.lau1, l.geom
+    FROM lau.lau l
+         JOIN (
+            SELECT
+                count(*) AS count,
+                f.year,
+                EXTRACT(MONTH FROM f.ts) AS month,
+                l1.name AS lau1,
+                l1.code
+            FROM fire f
+                     LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
+                     LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
+                     LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
+            GROUP BY f.year, EXTRACT(MONTH FROM f.ts),l1.code,l1.name
+         ) s ON l.code=s.code;
+
+
 GRANT SELECT ON ALL TABLES IN SCHEMA layers TO fire_read;
