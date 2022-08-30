@@ -140,9 +140,8 @@ CREATE TABLE fire(
     locality varchar,
     id_ref_fire_type integer NOT NULL REFERENCES ref.fire_type(id),
     ts timestamp without time zone NOT NULL,
-    reignition boolean,
+    rekindle boolean,
     slash_and_burn boolean,
-    false_alarm boolean,
     agricultural boolean,
     total_area double precision,
     brushwood_area double precision,
@@ -238,7 +237,7 @@ BEGIN
     ts_from:=ts_from_str::timestamp without time zone;
     DELETE FROM fire WHERE ts>=ts_from;
 
-    INSERT INTO fire (created_ts,year,ts,id_ref_fire_type,id_rel_lau,locality,reignition,slash_and_burn,false_alarm,agricultural,
+    INSERT INTO fire (created_ts,year,ts,id_ref_fire_type,id_rel_lau,locality,rekindle,slash_and_burn,agricultural,
                       total_area,brushwood_area,agricultural_area,inhabited_area,cco_code,cco_id,alarm_ts,id_ref_alarm_source,
                       id_ref_cause,id_ref_cause_type,extinguishing_ts,first_response_ts,temperature,relative_humidity,wind_speed,
                       wind_direction,precipitation,mean_height,mean_slope,file_urls,point)
@@ -249,9 +248,8 @@ BEGIN
         CASE WHEN rd.tipo IS NOT NULL THEN (SELECT id FROM ref.fire_type WHERE raw_name = lower(rd.tipo)) ELSE null END AS id_ref_fire_type,
         l.code AS id_rel_lau,
         rd.local AS locality,
-        reacendimentos=1 AS reignition,
+        reacendimentos=1 AS rekindle,
         queimada=1 AS slash_and_burn,
-        falsoalarme=1 AS false_alarm,
         agricola=1 AS agricultural,
         areatotal*10000 AS total_area,
         areamato*10000 AS brushwood_area,
