@@ -22,4 +22,7 @@ conn.commit()
 cursor.execute(open("db/create_layers.sql", "r").read())
 conn.commit()
 
+cursor.execute(open("db/create_dashboard_views.sql", "r").read())
+conn.commit()
+
 conn.close()
