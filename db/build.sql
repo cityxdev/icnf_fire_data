@@ -134,7 +134,7 @@ CREATE UNIQUE INDEX idx_un_raw_name_cause_type ON ref.cause_type(raw_name);
 
 CREATE TABLE fire(
     id serial NOT NULL,
-    id_rel_raw_data NOT NULL,
+    id_rel_raw_data integer NOT NULL,
     created_ts timestamp without time zone NOT NULL,
     updated_ts timestamp without time zone NOT NULL DEFAULT now(),
     year integer NOT NULL,
