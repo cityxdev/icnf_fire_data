@@ -11,7 +11,36 @@ from os.path import exists
 import pandas as pd
 import requests as requests
 
-IDENTIFIER_COLUMNS = ["ANO", "MES", "DIA", "HORA", "X", "Y", "DATAALERTA", "HORAALERTA"]
+IDENTIFIER_COLUMNS = ["id"]
+ALL_COLUMNS = ["id","DISTRITO", "TIPO", "ANO", "AREAPOV", "AREAMATO", "AREAAGRIC", "AREATOTAL", "REACENDIMENTOS", "QUEIMADA", "FALSOALARME",
+               "FOGACHO", "INCENDIO", "AGRICOLA", "NCCO", "NOMECCO", "DATAALERTA", "HORAALERTA", "LOCAL", "CONCELHO", "FREGUESIA",
+               "FONTEALERTA", "INE", "X", "Y", "DIA", "MES", "HORA", "OPERADOR", "PERIMETRO", "APS", "CAUSA", "TIPOCAUSA", "DHINICIO",
+               "DHFIM", "DURACAO", "HAHORA", "DATAEXTINCAO", "HORAEXTINCAO", "DATA1INTERVENCAO", "HORA1INTERVENCAO", "QUEIMA", "LAT",
+               "LON", "CAUSAFAMILIA", "TEMPERATURA", "HUMIDADERELATIVA", "VENTOINTENSIDADE", "VENTOINTENSIDADE_VETOR",
+               "VENTODIRECAO_VETOR", "PRECEPITACAO", "FFMC", "DMC", "DC", "ISI", "BUI", "FWI", "DSR", "THC", "MODFARSITE",
+               "ALTITUDEMEDIA", "DECLIVEMEDIO", "HORASEXPOSICAOMEDIA", "DENDIDADERV", "COSN5VARIEDADE", "AREAMANCHAMODFARSITE",
+               "AREASFICHEIROS_GNR", "AREASFICHEIROS_GTF", "FICHEIROIMAGEM_GNR", "AREASFICHEIROSHP_GTF", "AREASFICHEIROSHPXML_GTF",
+               "AREASFICHEIRODBF_GTF", "AREASFICHEIROPRJ_GTF", "AREASFICHEIROSBN_GTF", "AREASFICHEIROSBX_GTF", "AREASFICHEIROSHX_GTF",
+               "AREASFICHEIROZIP_SAA"]
+
+
+def parse_XML(xml_file, df_cols):
+    """source: https://medium.com/@robertopreste/from-xml-to-pandas-dataframes-9292980b1c1c"""
+    xtree = ET.parse(xml_file)
+    xroot = xtree.getroot()
+    rows = []
+    for node in xroot:
+        res = []
+        res.append(node.attrib.get(df_cols[0]))
+        for el in df_cols[1:]:
+            if node is not None and node.find(el) is not None:
+                res.append(node.find(el).text)
+            else:
+                res.append(None)
+        rows.append({df_cols[i]: res[i]
+                     for i, _ in enumerate(df_cols)})
+    out_df = pd.DataFrame(rows, columns=df_cols)
+    return out_df
 
 
 def retrieve(year, month, day):
@@ -28,11 +57,7 @@ def retrieve(year, month, day):
         raise Exception('Error connecting to ' + url + "\n" + resp.text)
 
     if "Sistema sem dados!..." not in resp.text:
-        et = ET.parse(io.StringIO(resp.text))
-
-        df = pd.DataFrame([
-            {f.tag: f.text for f in e.findall('./')} for e in et.findall('./')]
-        )
+        df = parse_XML(io.StringIO(resp.text), ALL_COLUMNS)
         df = df.reset_index()
         print("Retrieved " + str(len(df)) + " entries for " + str(year) + "-" + str(month) + "-" + str(day))
         return df.replace("|", "/")

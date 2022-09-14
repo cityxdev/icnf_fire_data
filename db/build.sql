@@ -3,6 +3,7 @@ CREATE EXTENSION IF NOT EXISTS postgis ;
 CREATE SCHEMA raw;
 CREATE TABLE raw.data (
       id serial PRIMARY KEY,
+      original_id character varying,
       created_ts timestamp without time zone NOT NULL DEFAULT now(),
       updated_ts timestamp without time zone NOT NULL DEFAULT now(),
       distrito character varying,

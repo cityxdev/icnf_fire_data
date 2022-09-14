@@ -27,6 +27,7 @@ def fill(year, month, day):
                 cursor = conn.cursor()
                 datareader = csv.reader(f, delimiter='|')
                 col_names = next(datareader)
+                col_names[0] = 'original_id'
                 col_names_str = ", ".join(col_names)
                 param_placeholders = ["%s"] * len(col_names)
                 param_placeholders_str = ", ".join(param_placeholders)
