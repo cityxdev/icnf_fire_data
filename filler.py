@@ -43,7 +43,7 @@ def fill(year, month, day):
                                         SELECT min(ctid)\
                                         FROM raw.data\
                                         WHERE ano = %s\
-                                        GROUP BY distrito, tipo, ano, areapov, areamato, areaagric, areatotal, reacendimentos, queimada, falsoalarme, fogacho, incendio, agricola, ncco, nomecco, dataalerta, horaalerta, local, concelho, freguesia, fontealerta, ine, x, y, dia, mes, hora, operador, perimetro, aps, causa, tipocausa, dhinicio, dhfim, duracao, hahora, dataextincao, horaextincao, data1intervencao, hora1intervencao, queima, lat, lon, causafamilia, temperatura, humidaderelativa, ventointensidade, ventointensidade_vetor, ventodirecao_vetor, precepitacao, ffmc, dmc, dc, isi, bui, fwi, dsr, thc, modfarsite, altitudemedia, declivemedio, horasexposicaomedia, dendidaderv, cosn5variedade, areamanchamodfarsite, areasficheiros_gnr, areasficheiros_gtf, ficheiroimagem_gnr, areasficheiroshp_gtf, areasficheiroshpxml_gtf, areasficheirodbf_gtf, areasficheiroprj_gtf, areasficheirosbn_gtf, areasficheirosbx_gtf, areasficheiroshx_gtf, areasficheirozip_saa)"
+                                        GROUP BY original_id)"
                 cursor.execute(delete_command, [year, year])
                 conn.commit()
                 conn.close()
