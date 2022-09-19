@@ -33,7 +33,9 @@ def fill(year, month, day):
                 param_placeholders_str = ", ".join(param_placeholders)
                 command = "INSERT INTO raw.data (" + col_names_str + ") VALUES (" + param_placeholders_str + ");"
                 for row in datareader:
-                    if ((month is None or int(row[col_names.index("MES")]) >= month) and (day is None or int(row[col_names.index("DIA")]) >= day)):
+                    rowmonth = int(row[col_names.index("MES")])
+                    rowday = int(row[col_names.index("DIA")])
+                    if ((month is None or rowmonth >= month) and (day is None or rowmonth > month or rowday >= day)):
                         params = [None if x == '' else x for x in row]
                         cursor.execute(command, params)
                 conn.commit()
