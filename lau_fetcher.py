@@ -28,6 +28,6 @@ urllib.request.urlretrieve(url, "lau.zip")
 with zipfile.ZipFile("lau.zip", "r") as zip_ref:
     zip_ref.extractall("lau")
     os.remove("lau.zip")
-    command = '''ogr2ogr -f "PostgreSQL" PG:"host=''' + host + ''' port=''' + port + ''' user=''' + user + ''' password=''' + password + ''' dbname=''' + dbname + '''" lau/*.shp -nln lau'''
+    command = '''ogr2ogr -f "PostgreSQL" PG:"host=''' + host + ''' port=''' + port + ''' user=''' + user + ''' password=''' + password + ''' dbname=''' + dbname + '''" lau/Continente/Cont_AAD_CAOP*.shp -nln lau'''
     os.system(command)
     shutil.rmtree("lau")
