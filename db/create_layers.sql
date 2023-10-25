@@ -5,6 +5,7 @@ GRANT USAGE ON SCHEMA layers TO fire_read;
 CREATE VIEW layers.fire AS
     SELECT
         f.id,
+        f.original_id,
         f.year,
         f.ts,
         l3.name AS lau3,
@@ -47,6 +48,7 @@ CREATE VIEW layers.fire AS
 CREATE VIEW layers.fire_points AS
 SELECT
     id,
+    original_id,
     year,
     ts,
     lau3,
@@ -81,6 +83,7 @@ FROM layers.fire;
 CREATE VIEW layers.fire_multipolygons AS
 SELECT
     id,
+    original_id,
     year,
     ts,
     lau3,

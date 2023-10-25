@@ -41,7 +41,7 @@ CREATE VIEW dashboard.total_fire_yearly AS
          LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
     WHERE f.total_area IS NULL OR f.total_area>10
     GROUP BY f.year, l1.code;
-CREATE VIEW dashboard.total_fire_montlhy AS
+CREATE VIEW dashboard.total_fire_monthly AS
     SELECT
         count(*) AS count,
         f.year,
@@ -69,6 +69,11 @@ CREATE VIEW dashboard.total_fire_hourly AS
 CREATE VIEW dashboard.total_area_yearly AS
     SELECT
         sum(f.total_area) AS total_area,
+        min(f.total_area) AS min_area,
+        PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY f.total_area) AS p25_area,
+        PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY f.total_area) AS median_area,
+        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY f.total_area) AS p75_area,
+        max(f.total_area) AS max_area,
         f.year,
         l1.code AS lau1_code
     FROM fire f
@@ -93,6 +98,7 @@ CREATE VIEW dashboard.total_area_monthly AS
 CREATE VIEW dashboard.cause_type_yearly AS
     SELECT
         count(*) AS count,
+        sum(f.total_area) AS area,
         f.year,
         l1.code AS lau1_code,
         ct.code AS cause_type_code
@@ -101,11 +107,12 @@ CREATE VIEW dashboard.cause_type_yearly AS
          LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
          LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
          LEFT JOIN ref.cause_type ct ON f.id_ref_cause_type = ct.id
-    WHERE f.total_area IS NULL OR f.total_area>10
+    WHERE f.total_area IS NOT NULL AND f.total_area>10
     GROUP BY f.year,l1.code,ct.code;
 CREATE VIEW dashboard.cause_type_monthly AS
     SELECT
         count(*) AS count,
+        sum(f.total_area) AS area,
         f.year,
         EXTRACT(MONTH FROM f.ts)::int AS month,
         l1.code AS lau1_code,
@@ -115,11 +122,12 @@ CREATE VIEW dashboard.cause_type_monthly AS
          LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
          LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
          LEFT JOIN ref.cause_type ct ON f.id_ref_cause_type = ct.id
-    WHERE f.total_area IS NULL OR f.total_area>10
+    WHERE f.total_area IS NOT NULL AND f.total_area>10
     GROUP BY f.year,EXTRACT(MONTH FROM f.ts),l1.code,ct.code;
 CREATE VIEW dashboard.cause_type_hourly AS
     SELECT
         count(*) AS count,
+        sum(f.total_area) AS area,
         f.year,
         EXTRACT(HOUR FROM f.ts)::int AS hour,
         l1.code AS lau1_code,
@@ -129,13 +137,15 @@ CREATE VIEW dashboard.cause_type_hourly AS
          LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
          LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
          LEFT JOIN ref.cause_type ct ON f.id_ref_cause_type = ct.id
-    WHERE f.total_area IS NULL OR f.total_area>10
+    WHERE f.total_area IS NOT NULL AND f.total_area>10
     GROUP BY f.year,EXTRACT(HOUR FROM f.ts),l1.code,ct.code;
 
 CREATE VIEW dashboard.response_time AS
     SELECT
         max(EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS max,
+        PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS p25,
         PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS median,
+        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS p75,
         min(EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS min,
         l1.code AS lau1_code,
         f.year
@@ -151,7 +161,9 @@ CREATE VIEW dashboard.response_time AS
 CREATE VIEW dashboard.firefighting_duration AS
     SELECT
         max(EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS max,
+        PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS p25,
         PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS median,
+        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS p75,
         min(EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS min,
         l1.code AS lau1_code,
         f.year
@@ -167,7 +179,9 @@ CREATE VIEW dashboard.firefighting_duration AS
 CREATE VIEW dashboard.total_duration AS
     SELECT
         max(EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS max,
+        PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS p25,
         PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS median,
+        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS p75,
         min(EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS min,
         l1.code AS lau1_code,
         f.year

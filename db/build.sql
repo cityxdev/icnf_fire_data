@@ -135,6 +135,7 @@ CREATE UNIQUE INDEX idx_un_raw_name_cause_type ON ref.cause_type(raw_name);
 
 CREATE TABLE fire(
     id serial NOT NULL,
+    original_id character varying NOT NULL,
     id_rel_raw_data integer NOT NULL,
     created_ts timestamp without time zone NOT NULL,
     updated_ts timestamp without time zone NOT NULL DEFAULT now(),
@@ -240,12 +241,13 @@ BEGIN
     ts_from:=ts_from_str::timestamp without time zone;
     DELETE FROM fire WHERE ts>=ts_from;
 
-    INSERT INTO fire (id_rel_raw_data,created_ts,year,ts,id_ref_fire_type,id_rel_lau,locality,rekindle,slash_and_burn,agricultural,
+    INSERT INTO fire (id_rel_raw_data,original_id,created_ts,year,ts,id_ref_fire_type,id_rel_lau,locality,rekindle,slash_and_burn,agricultural,
                       total_area,brushwood_area,agricultural_area,inhabited_area,cco_code,cco_id,alarm_ts,id_ref_alarm_source,
                       id_ref_cause,id_ref_cause_type,extinguishing_ts,first_response_ts,temperature,relative_humidity,wind_speed,
                       wind_direction,precipitation,mean_height,mean_slope,file_urls,point)
     SELECT
         rd.id AS id_rel_raw_data,
+        rd.original_id AS original_id,
         now() AS created_ts,
         rd.ano::integer AS year,
         (rd.ano||'-'||rd.mes||'-'||rd.dia||' '||rd.hora||':00:00')::timestamp without time zone AS ts,

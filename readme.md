@@ -49,7 +49,7 @@ This is an **experimental** feature that lacks reliability because many links ar
 There are utilities to update data regularly, in order to get new data and also update recent entries:
 * `update_daily.sh` and `update_daily_with_polygons.sh` is meant to be run daily and overwrites data from the last 5 days 
 * `update_weekly.sh` and `update_weekly_with_polygons.sh` is meant to be run weekly and overwrites data from the last 30 days 
-* `update_monthly.sh` and `update_monthly_with_polygons.sh` is meant to be run monthly and overwrites data from the last 365 days 
+* `update_monthly.sh` and `update_monthly_with_polygons.sh` is meant to be run monthly and overwrites data from the last 730 days 
 
 
 
