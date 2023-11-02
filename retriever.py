@@ -4,6 +4,7 @@ import io
 import sys
 import threading
 import xml.etree.ElementTree as ET
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from os.path import exists
@@ -12,7 +13,7 @@ import pandas as pd
 import requests as requests
 
 IDENTIFIER_COLUMNS = ["id"]
-ALL_COLUMNS = ["id","DISTRITO", "TIPO", "ANO", "AREAPOV", "AREAMATO", "AREAAGRIC", "AREATOTAL", "REACENDIMENTOS", "QUEIMADA", "FALSOALARME",
+ALL_COLUMNS = ["id", "DISTRITO", "TIPO", "ANO", "AREAPOV", "AREAMATO", "AREAAGRIC", "AREATOTAL", "REACENDIMENTOS", "QUEIMADA", "FALSOALARME",
                "FOGACHO", "INCENDIO", "AGRICOLA", "NCCO", "NOMECCO", "DATAALERTA", "HORAALERTA", "LOCAL", "CONCELHO", "FREGUESIA",
                "FONTEALERTA", "INE", "X", "Y", "DIA", "MES", "HORA", "OPERADOR", "PERIMETRO", "APS", "CAUSA", "TIPOCAUSA", "DHINICIO",
                "DHFIM", "DURACAO", "HAHORA", "DATAEXTINCAO", "HORAEXTINCAO", "DATA1INTERVENCAO", "HORA1INTERVENCAO", "QUEIMA", "LAT",
@@ -58,21 +59,24 @@ def retrieve(year, month, day):
 
     if "Sistema sem dados!..." not in resp.text:
         df = parse_XML(io.StringIO(resp.text), ALL_COLUMNS)
+        df[IDENTIFIER_COLUMNS[0]] = df[IDENTIFIER_COLUMNS[0]].astype(str)
         df = df.reset_index()
         print("Retrieved " + str(len(df)) + " entries for " + str(year) + "-" + str(month) + "-" + str(day))
         return df.replace("|", "/")
     else:
+        print('No data for '+str(year) + "-" + str(month) + "-" + str(day))
         return pd.DataFrame()
 
 
-def concat(df1, df2):
+def concat(df1, df2, year=None, month=None):
     if len(df1) == 0:
         return df2
     if len(df2) == 0:
         return df1
-    merged_df = pd.concat([df1, df2]).drop_duplicates(subset=IDENTIFIER_COLUMNS)
+    merged_df = pd.concat([df1, df2]).drop_duplicates(subset=IDENTIFIER_COLUMNS, keep='first')
     df_sorted = merged_df.sort_values(IDENTIFIER_COLUMNS)
     df_sorted.reset_index()
+    print('Merged '+str(year)+'-'+str(month)+': '+str(len(df1))+' + '+str(len(df2))+'='+str(len(df_sorted)))
     return df_sorted
 
 
@@ -90,6 +94,7 @@ def read_year_from_file(year, lock):
     lock.acquire()
     if exists(filename):
         df = pd.read_csv(filename, header=0, sep='|', low_memory=False)
+        df[IDENTIFIER_COLUMNS[0]] = df[IDENTIFIER_COLUMNS[0]].astype(str)
         print("Read " + str(len(df)) + " entries from " + filename)
         lock.release()
         return df
@@ -98,78 +103,98 @@ def read_year_from_file(year, lock):
         return None
 
 
-def retrieve_year(year, lock):
-    print('Start retrieve year ' + str(year))
-    dt = datetime.datetime.today()
-    current_year = dt.year
-    current_month = dt.month
-    accumulated_df = None
-    for month in range(1, 12 + 1):
-        if (year < current_year or (year == current_year and month <= current_month)):
-            retrieved_df = retrieve(year, month, None)
-            if accumulated_df is None:
-                accumulated_df = retrieved_df
-            else:
-                accumulated_df = concat(accumulated_df, retrieved_df)
-    save_year_2_file(accumulated_df, year, lock)
-    print("Retrieved a total of " + str(len(accumulated_df)) + " for year " + str(year))
+def retrieve_year(year, lockFile):
+    try:
+        print('Start retrieve year ' + str(year))
+        dt = datetime.datetime.today()
+        current_year = dt.year
+        current_month = dt.month
+        accumulated_df = None
+        for month in range(1, 12 + 1):
+            if (year < current_year or (year == current_year and month <= current_month)):
+                retrieved_df = retrieve(year, month, None)
+                if accumulated_df is None:
+                    accumulated_df = retrieved_df
+                else:
+                    accumulated_df = concat(accumulated_df, retrieved_df)
+        save_year_2_file(accumulated_df, year, lockFile)
+        print("Retrieved a total of " + str(len(accumulated_df)) + " for year " + str(year))
+    except Exception as e:
+        print("Error: unable retrieve year "+str(year))
+        print(e)
+        traceback.print_exception(e)
+
+def retrieve_month(year, month, lockFile):
+    try:
+        df = retrieve(year, month, None)
+        year_df = read_year_from_file(year, lockFile)
+        if year_df is not None:
+            year_df = concat(df, year_df, year, month)
+            save_year_2_file(year_df, year, lockFile)
+        else:
+            save_year_2_file(df, year, lockFile)
+    except Exception as e:
+        print("Error: unable retrieve month "+str(year)+"-"+str(month))
+        print(e)
+        traceback.print_exception(e)
+
+def retrieve_months(year, months, lockFile):
+    print('Will retrieve the following months for year '+str(year)+': '+str(months))
+    for month in months:
+        retrieve_month(year, month, lockFile)
 
 
-def retrieve_month(year, month, lock):
-    df = retrieve(year, month, None)
-    year_df = read_year_from_file(year, lock)
-    if year_df is not None:
-        year_df = concat(df, year_df)
-        save_year_2_file(year_df, year, lock)
-    else:
-        save_year_2_file(df, year, lock)
-
-
-def retrieve_day(day, month, year, lock):
+def retrieve_day(day, month, year, lockFile):
     df = retrieve(year, month, day)
-    year_df = read_year_from_file(year, lock)
+    year_df = read_year_from_file(year, lockFile)
     if year_df is not None:
         year_df = concat(df, year_df)
-        save_year_2_file(year_df, year, lock)
+        save_year_2_file(year_df, year, lockFile)
     else:
-        save_year_2_file(df, year, lock)
+        save_year_2_file(df, year, lockFile)
 
 
 def retrieve_last_days(ndays=10):
     print('Start retrieve last ' + str(ndays) + ' days')
     today = datetime.datetime.today()
     fromday = today - datetime.timedelta(days=ndays)
-    lock = threading.Lock()
+    lockFile = threading.Lock()
     if (today - fromday).days > 10:
         with ThreadPoolExecutor(max_workers=6) as executor:
             job_date = date(fromday.year, fromday.month, fromday.day)
-            begin_of_month = date(today.year, today.month, today.day)
-            jobs = []
+            begin_of_month = date(today.year, today.month, 1)
+            jobs = {}
+            years = []
             while job_date <= begin_of_month:
-                jobs.append([job_date.year,job_date.month])
+                if str(job_date.year) not in jobs:
+                    years.append(job_date.year)
+                    jobs[str(job_date.year)] = []
+                jobs[str(job_date.year)].append(job_date.month)
                 if (job_date.month < 12):
                     job_date = date(job_date.year, job_date.month + 1, 1)
                 else:
                     job_date = date(job_date.year + 1, 1, 1)
             try:
                 futures = []
-                for year_month in jobs:
-                    futures.append(executor.submit(retrieve_month, year_month[0], year_month[1], lock))
+                print('We have the following jobs: '+str(jobs))
+                for year in years:
+                    futures.append(executor.submit(retrieve_months, year, jobs[str(year)], lockFile))
 
                 complete_count = 0
                 for future in concurrent.futures.as_completed(futures):
                     complete_count += 1
-                    print('Completed tasks: ' + str(complete_count) + ' of ' + str(len(jobs)))
+                    print('Completed tasks: ' + str(complete_count) + ' of ' + str(len(years)))
             except Exception as e:
                 print("Error: unable to start thread")
                 print(e)
+                traceback.print_exception(e)
     else:
         for n in range(1, ndays + 1):
             dt = today - datetime.timedelta(days=n)
             year = dt.year
             month = dt.month
             day = dt.day
-            retrieve_day(day, month, year, lock)
+            retrieve_day(day, month, year, lockFile)
     print('End retrieve last ' + str(ndays) + ' days')
 
 
@@ -179,11 +204,12 @@ def retrieve_all():
         dt = datetime.datetime.today()
         current_year = dt.year
         jobs = range(2001, current_year + 1)
-        lock = threading.Lock()
+        lockFile = threading.Lock()
         try:
             futures = []
+            print('We have the following jobs: '+str(jobs))
             for year in jobs:
-                futures.append(executor.submit(retrieve_year, year, lock))
+                futures.append(executor.submit(retrieve_year, year, lockFile))
 
             complete_count = 0
             for future in concurrent.futures.as_completed(futures):
@@ -192,6 +218,7 @@ def retrieve_all():
         except Exception as e:
             print("Error: unable to start thread")
             print(e)
+            traceback.print_exception(e)
         print('End')
 
 

@@ -66,7 +66,7 @@ def fetch_polygons_for_file_list(id, file_list):
         if has_data:
             update_command = "UPDATE fire" \
                              " SET multipolygon = (SELECT ST_Transform(ST_MakeValid(ST_Multi(ST_CollectionExtract(ST_Union(ST_MakeValid(ST_SnapToGrid(geom,0.00001))),3))),4326)::geography FROM "+tablename+") WHERE id=%s;"
-            update_command = update_command + "UPDATE fire SET multipolygon = NULL WHERE id=%s AND (ST_IsEmpty(multipolygon::geometry) OR not(ST_IsValid(multipolygon::geometry)) OR ST_Area(multipolygon)>50000000);"
+            update_command = update_command + "UPDATE fire SET multipolygon = NULL WHERE id=%s AND (ST_IsEmpty(multipolygon::geometry) OR not(ST_IsValid(multipolygon::geometry)));"
             try:
                 cursor.execute(update_command, [id, id])
                 conn.commit()
@@ -124,8 +124,12 @@ def fetch_polygons_from(fromyear, frommonth, fromday):
             print(e)
     print('End fetch polygons from ' + str(fromyear) + "-" + str(frommonth) + "-" + str(fromday))
 
-
-if len(sys.argv) > 2 and sys.argv[1] == 'ndays':
+if len(sys.argv) == 4:
+    year = int(sys.argv[1])
+    month = int(sys.argv[2])
+    day = int(sys.argv[3])
+    fetch_polygons(year, month, day)
+elif len(sys.argv) > 3 and sys.argv[1] == 'ndays':
     dt = datetime.datetime.today() - datetime.timedelta(days=int(sys.argv[2]))
     year = dt.year
     month = dt.month

@@ -42,7 +42,7 @@ def fill(year, month, day):
                 print("Delete duplicates from " + str(year))
                 delete_command = "DELETE FROM raw.data\
                                     WHERE ano = %s AND ctid NOT IN (\
-                                        SELECT min(ctid)\
+                                        SELECT max(ctid)\
                                         FROM raw.data\
                                         WHERE ano = %s\
                                         GROUP BY original_id)"

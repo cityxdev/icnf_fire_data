@@ -140,60 +140,132 @@ CREATE VIEW dashboard.cause_type_hourly AS
     WHERE f.total_area IS NOT NULL AND f.total_area>10
     GROUP BY f.year,EXTRACT(HOUR FROM f.ts),l1.code,ct.code;
 
-CREATE VIEW dashboard.response_time AS
+CREATE OR REPLACE VIEW dashboard.response_time AS
+WITH stats AS (
     SELECT
-        max(EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS max,
-        PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS p25,
-        PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS median,
-        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS p75,
-        min(EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS min,
-        l1.code AS lau1_code,
-        f.year
+                    PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS p25,
+                    PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS p75,
+                    l1.code AS lau1_code,
+                    f.year
     FROM fire f
-         LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
-         LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
-         LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
+             LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
+             LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
+             LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
     WHERE (f.total_area IS NULL OR f.total_area>10)
       AND f.first_response_ts IS NOT NULL
       AND f.alarm_ts IS NOT NULL
       AND f.first_response_ts>f.alarm_ts
-    GROUP BY f.year,l1.code;
-CREATE VIEW dashboard.firefighting_duration AS
+    GROUP BY f.year,l1.code
+)
+SELECT
+    min(f.time) AS min,
+    PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY f.time) AS p25,
+    PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY f.time) AS median,
+    PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY f.time) AS p75,
+    max(f.time) AS max,
+    f.lau1_code,
+    f.year
+FROM (
+         SELECT
+                 EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts)*1000 AS time,
+                 f.year,
+                 l1.code AS lau1_code
+         FROM fire f
+                  LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
+                  LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
+                  LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
+         WHERE (f.total_area IS NULL OR f.total_area>10)
+           AND f.first_response_ts IS NOT NULL
+           AND f.alarm_ts IS NOT NULL
+           AND f.first_response_ts>f.alarm_ts
+     ) f
+         JOIN stats s ON s.year=f.year AND s.lau1_code=f.lau1_code
+WHERE f.time BETWEEN s.p25-1.5*(s.p75-s.p25) AND s.p75+1.5*(s.p75-s.p25)
+GROUP BY f.year,f.lau1_code;
+CREATE OR REPLACE VIEW dashboard.firefighting_duration AS
+WITH stats AS (
     SELECT
-        max(EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS max,
-        PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS p25,
-        PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS median,
-        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS p75,
-        min(EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS min,
-        l1.code AS lau1_code,
-        f.year
+                    PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS p25,
+                    PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS p75,
+                    l1.code AS lau1_code,
+                    f.year
     FROM fire f
-         LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
-         LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
-         LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
+             LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
+             LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
+             LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
     WHERE (f.total_area IS NULL OR f.total_area>10)
+      AND f.extinguishing_ts IS NOT NULL
       AND f.first_response_ts IS NOT NULL
-      AND f.extinguishing_ts IS NOT NULL
       AND f.extinguishing_ts>f.first_response_ts
-    GROUP BY f.year,l1.code;
-CREATE VIEW dashboard.total_duration AS
+    GROUP BY f.year,l1.code
+)
+SELECT
+    min(f.time) AS min,
+    PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY f.time) AS p25,
+    PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY f.time) AS median,
+    PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY f.time) AS p75,
+    max(f.time) AS max,
+    f.lau1_code,
+    f.year
+FROM (
+         SELECT
+                 EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts)*1000 AS time,
+                 f.year,
+                 l1.code AS lau1_code
+         FROM fire f
+                  LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
+                  LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
+                  LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
+         WHERE (f.total_area IS NULL OR f.total_area>10)
+           AND f.extinguishing_ts IS NOT NULL
+           AND f.first_response_ts IS NOT NULL
+           AND f.extinguishing_ts>f.first_response_ts
+     ) f
+         JOIN stats s ON s.year=f.year AND s.lau1_code=f.lau1_code
+WHERE f.time BETWEEN s.p25-1.5*(s.p75-s.p25) AND 60::bigint*24*60*60*1000
+GROUP BY f.year,f.lau1_code;
+CREATE OR REPLACE VIEW dashboard.total_duration AS
+WITH stats AS (
     SELECT
-        max(EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS max,
-        PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS p25,
-        PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS median,
-        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS p75,
-        min(EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS min,
-        l1.code AS lau1_code,
-        f.year
+                    PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS p25,
+                    PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS p75,
+                    l1.code AS lau1_code,
+                    f.year
     FROM fire f
-         LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
-         LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
-         LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
+             LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
+             LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
+             LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
     WHERE (f.total_area IS NULL OR f.total_area>10)
-      AND f.alarm_ts IS NOT NULL
       AND f.extinguishing_ts IS NOT NULL
+      AND f.alarm_ts IS NOT NULL
       AND f.extinguishing_ts>f.alarm_ts
-    GROUP BY f.year,l1.code;
+    GROUP BY f.year,l1.code
+)
+SELECT
+    min(f.time) AS min,
+    PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY f.time) AS p25,
+    PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY f.time) AS median,
+    PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY f.time) AS p75,
+    max(f.time) AS max,
+    f.lau1_code,
+    f.year
+FROM (
+         SELECT
+                 EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts)*1000 AS time,
+                 f.year,
+                 l1.code AS lau1_code
+         FROM fire f
+                  LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
+                  LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
+                  LEFT JOIN lau.lau l1 ON l1.code = l2.code_parent
+         WHERE (f.total_area IS NULL OR f.total_area>10)
+           AND f.extinguishing_ts IS NOT NULL
+           AND f.alarm_ts IS NOT NULL
+           AND f.extinguishing_ts>f.alarm_ts
+     ) f
+         JOIN stats s ON s.year=f.year AND s.lau1_code=f.lau1_code
+WHERE f.time BETWEEN s.p25-1.5*(s.p75-s.p25) AND 60::bigint*24*60*60*1000
+GROUP BY f.year,f.lau1_code;
 
 
 GRANT SELECT ON ALL TABLES IN SCHEMA dashboard TO fire_read;
