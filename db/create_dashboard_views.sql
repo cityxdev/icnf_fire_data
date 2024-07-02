@@ -143,10 +143,10 @@ CREATE VIEW dashboard.cause_type_hourly AS
 CREATE OR REPLACE VIEW dashboard.response_time AS
 WITH stats AS (
     SELECT
-                    PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS p25,
-                    PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS p75,
-                    l1.code AS lau1_code,
-                    f.year
+        PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS p25,
+        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.first_response_ts-f.alarm_ts))*1000 AS p75,
+        l1.code AS lau1_code,
+        f.year
     FROM fire f
              LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
              LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
@@ -185,10 +185,10 @@ GROUP BY f.year,f.lau1_code;
 CREATE OR REPLACE VIEW dashboard.firefighting_duration AS
 WITH stats AS (
     SELECT
-                    PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS p25,
-                    PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS p75,
-                    l1.code AS lau1_code,
-                    f.year
+        PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS p25,
+        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.first_response_ts))*1000 AS p75,
+        l1.code AS lau1_code,
+        f.year
     FROM fire f
              LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
              LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent
@@ -227,10 +227,10 @@ GROUP BY f.year,f.lau1_code;
 CREATE OR REPLACE VIEW dashboard.total_duration AS
 WITH stats AS (
     SELECT
-                    PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS p25,
-                    PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS p75,
-                    l1.code AS lau1_code,
-                    f.year
+        PERCENTILE_CONT(0.25) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS p25,
+        PERCENTILE_CONT(0.75) WITHIN GROUP(ORDER BY EXTRACT(EPOCH FROM f.extinguishing_ts-f.alarm_ts))*1000 AS p75,
+        l1.code AS lau1_code,
+        f.year
     FROM fire f
              LEFT JOIN lau.lau l3 ON f.id_rel_lau = l3.code
              LEFT JOIN lau.lau l2 ON l2.code = l3.code_parent

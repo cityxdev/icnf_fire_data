@@ -82,7 +82,8 @@ def concat(df1, df2, year=None, month=None):
 
 def save_year_2_file(df, year, lock):
     filename = "data/" + str(year) + ".csv"
-    df = df.drop("index", axis=1)
+    if 'index' in df.columns:
+        df = df.drop("index", axis=1)
     lock.acquire()
     df.to_csv(filename, index=False, sep="|")
     lock.release()

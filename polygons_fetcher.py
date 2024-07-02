@@ -129,7 +129,7 @@ if len(sys.argv) == 4:
     month = int(sys.argv[2])
     day = int(sys.argv[3])
     fetch_polygons(year, month, day)
-elif len(sys.argv) > 3 and sys.argv[1] == 'ndays':
+elif len(sys.argv) == 3 and sys.argv[1] == 'ndays':
     dt = datetime.datetime.today() - datetime.timedelta(days=int(sys.argv[2]))
     year = dt.year
     month = dt.month

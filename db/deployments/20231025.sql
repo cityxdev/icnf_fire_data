@@ -599,3 +599,57 @@ GROUP BY f.year,f.lau1_code;
 
 GRANT SELECT ON ALL TABLES IN SCHEMA layers TO fire_read;
 GRANT SELECT ON ALL TABLES IN SCHEMA dashboard TO fire_read;
+
+
+
+DROP INDEX idx_search_fire_2001; CREATE INDEX idx_search_fire_2001 ON fire_2001 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2002; CREATE INDEX idx_search_fire_2002 ON fire_2002 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2003; CREATE INDEX idx_search_fire_2003 ON fire_2003 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2004; CREATE INDEX idx_search_fire_2004 ON fire_2004 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2005; CREATE INDEX idx_search_fire_2005 ON fire_2005 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2006; CREATE INDEX idx_search_fire_2006 ON fire_2006 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2007; CREATE INDEX idx_search_fire_2007 ON fire_2007 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2008; CREATE INDEX idx_search_fire_2008 ON fire_2008 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2009; CREATE INDEX idx_search_fire_2009 ON fire_2009 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2010; CREATE INDEX idx_search_fire_2010 ON fire_2010 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2011; CREATE INDEX idx_search_fire_2011 ON fire_2011 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2012; CREATE INDEX idx_search_fire_2012 ON fire_2012 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2013; CREATE INDEX idx_search_fire_2013 ON fire_2013 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2014; CREATE INDEX idx_search_fire_2014 ON fire_2014 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2015; CREATE INDEX idx_search_fire_2015 ON fire_2015 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2016; CREATE INDEX idx_search_fire_2016 ON fire_2016 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2017; CREATE INDEX idx_search_fire_2017 ON fire_2017 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2018; CREATE INDEX idx_search_fire_2018 ON fire_2018 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2019; CREATE INDEX idx_search_fire_2019 ON fire_2019 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2020; CREATE INDEX idx_search_fire_2020 ON fire_2020 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2021; CREATE INDEX idx_search_fire_2021 ON fire_2021 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2022; CREATE INDEX idx_search_fire_2022 ON fire_2022 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2023; CREATE INDEX idx_search_fire_2023 ON fire_2023 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2024; CREATE INDEX idx_search_fire_2024 ON fire_2024 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2025; CREATE INDEX idx_search_fire_2025 ON fire_2025 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2026; CREATE INDEX idx_search_fire_2026 ON fire_2026 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2027; CREATE INDEX idx_search_fire_2027 ON fire_2027 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2028; CREATE INDEX idx_search_fire_2028 ON fire_2028 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2029; CREATE INDEX idx_search_fire_2029 ON fire_2029 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2030; CREATE INDEX idx_search_fire_2030 ON fire_2030 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2031; CREATE INDEX idx_search_fire_2031 ON fire_2031 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2032; CREATE INDEX idx_search_fire_2032 ON fire_2032 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2033; CREATE INDEX idx_search_fire_2033 ON fire_2033 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2034; CREATE INDEX idx_search_fire_2034 ON fire_2034 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2035; CREATE INDEX idx_search_fire_2035 ON fire_2035 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2036; CREATE INDEX idx_search_fire_2036 ON fire_2036 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2037; CREATE INDEX idx_search_fire_2037 ON fire_2037 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2038; CREATE INDEX idx_search_fire_2038 ON fire_2038 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2039; CREATE INDEX idx_search_fire_2039 ON fire_2039 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2040; CREATE INDEX idx_search_fire_2040 ON fire_2040 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2041; CREATE INDEX idx_search_fire_2041 ON fire_2041 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2042; CREATE INDEX idx_search_fire_2042 ON fire_2042 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2043; CREATE INDEX idx_search_fire_2043 ON fire_2043 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2044; CREATE INDEX idx_search_fire_2044 ON fire_2044 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2045; CREATE INDEX idx_search_fire_2045 ON fire_2045 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2046; CREATE INDEX idx_search_fire_2046 ON fire_2046 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2047; CREATE INDEX idx_search_fire_2047 ON fire_2047 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2048; CREATE INDEX idx_search_fire_2048 ON fire_2048 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2049; CREATE INDEX idx_search_fire_2049 ON fire_2049 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+DROP INDEX idx_search_fire_2050; CREATE INDEX idx_search_fire_2050 ON fire_2050 (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);
+

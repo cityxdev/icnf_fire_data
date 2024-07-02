@@ -188,7 +188,7 @@ BEGIN
         EXECUTE 'CREATE TABLE fire_'||y||' PARTITION OF fire FOR VALUES IN ('||y||');';
         EXECUTE 'CREATE INDEX idx_geom_point_fire_'||y||' ON fire_'||y||' USING gist (point);';
         EXECUTE 'CREATE INDEX idx_geom_multipolygon_fire_'||y||' ON fire_'||y||' USING gist (multipolygon);';
-        EXECUTE 'CREATE INDEX idx_search_fire_'||y||' ON fire_'||y||' (ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);';
+        EXECUTE 'CREATE INDEX idx_search_fire_'||y||' ON fire_'||y||' (ts,alarm_ts,extinguishing_ts,first_response_ts,id_rel_lau,total_area,temperature,wind_speed,relative_humidity,mean_height,mean_slope);';
         EXECUTE 'CREATE TRIGGER update_fire_'||y||'_updatedts BEFORE UPDATE ON fire_'||y||' FOR EACH ROW EXECUTE PROCEDURE update_ts()';
     END LOOP;
 END;
